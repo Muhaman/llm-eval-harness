@@ -16,6 +16,8 @@ from evalh.runner import run_suite
 
 app = typer.Typer(add_completion=False, no_args_is_help=True, help="LLM regression eval harness.")
 
+DEFAULT_OUT = Path("results.jsonl")
+DEFAULT_REPORT = Path("report.md")
 EXIT_REGRESSED = 1
 EXIT_CONFIG_ERROR = 2
 
@@ -36,16 +38,10 @@ def _fail(message: str) -> typer.Exit:
 
 @app.command()
 def run(
-    suite_path: Annotated[Path, typer.Argument(metavar="SUITE", help="Path to a suite YAML file.")],
-    out: Annotated[Path, typer.Option(help="Where to write per-case JSONL results.")] = Path(
-        "results.jsonl"
-    ),
-    report: Annotated[Path, typer.Option(help="Where to write the Markdown report.")] = Path(
-        "report.md"
-    ),
-    baseline: Annotated[
-        Path | None, typer.Option(help="Baseline results JSONL to compare against.")
-    ] = None,
+    suite_path: Annotated[Path, typer.Argument(metavar="SUITE", help="Suite YAML file.")],
+    out: Annotated[Path, typer.Option(help="Per-case JSONL results.")] = DEFAULT_OUT,
+    report: Annotated[Path, typer.Option(help="Markdown report.")] = DEFAULT_REPORT,
+    baseline: Annotated[Path | None, typer.Option(help="Baseline JSONL to compare.")] = None,
     threshold: Annotated[float, typer.Option(help="Allowed pass-rate drop.")] = 0.02,
     concurrency: Annotated[int, typer.Option(min=1, help="Max in-flight cases.")] = 8,
     timeout: Annotated[float, typer.Option(min=0.001, help="Per-case timeout, seconds.")] = 60.0,

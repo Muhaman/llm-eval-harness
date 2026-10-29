@@ -1,9 +1,13 @@
 import json
 from typing import Any
 
-from jsonschema import Draft202012Validator
+from jsonschema import Draft202012Validator, ValidationError
 
 from evalh.config import Case, GradeResult
+
+
+def _error_path(error: ValidationError) -> list[str]:
+    return [str(part) for part in error.path]
 
 
 class JsonSchemaGrader:
@@ -17,7 +21,7 @@ class JsonSchemaGrader:
             document = json.loads(output)
         except json.JSONDecodeError as exc:
             return GradeResult(passed=False, score=0.0, detail=f"output is not valid JSON: {exc}")
-        errors = sorted(self._validator.iter_errors(document), key=lambda err: list(err.path))
+        errors = sorted(self._validator.iter_errors(document), key=_error_path)
         if not errors:
             return GradeResult(passed=True, score=1.0, detail="valid against schema")
         first = errors[0]
