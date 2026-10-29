@@ -40,7 +40,7 @@ def test_improvement_lists_newly_passing() -> None:
     assert result.newly_passing == ["c2"]
 
 
-def test_removed_case_drops_pass_rate_beyond_threshold() -> None:
+def test_new_failure_regresses_even_within_threshold() -> None:
     baseline = make_run([True] * 10)
     current = make_run([True] * 9 + [False])
     assert compare(current, baseline, threshold=0.5).regressed

@@ -6,7 +6,7 @@ import pytest
 from evalh.config import ConfigError, GraderDefaults, GraderSpec, Suite
 from evalh.graders import build_grader
 from evalh.llm import Judge, JudgeError
-from tests.conftest import FakeJudge, make_case
+from helpers import FakeJudge, make_case
 
 
 def spec(**kwargs: Any) -> GraderSpec:
@@ -105,6 +105,6 @@ async def test_judge_refusal_raises_judge_error() -> None:
         return SimpleNamespace(stop_reason="refusal", parsed_output=None)
 
     client = SimpleNamespace(messages=SimpleNamespace(parse=parse))
-    judge = Judge(client=client, model="m")  # type: ignore[arg-type]
+    judge = Judge(client=client, model="m")
     with pytest.raises(JudgeError):
         await judge.score(rubric="r", input="i", output="o", expected=None)

@@ -2,7 +2,7 @@ import asyncio
 from typing import Any
 
 from evalh.runner import run_suite
-from tests.conftest import make_case, make_suite
+from helpers import make_case, make_suite
 
 
 async def test_timeout_marks_case_failed_and_others_complete() -> None:
