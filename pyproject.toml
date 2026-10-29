@@ -1,0 +1,51 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "llm-eval-harness"
+version = "0.1.0"
+description = "Regression testing for LLM apps: YAML suites, deterministic + LLM-as-judge graders, CI gate."
+readme = "README.md"
+license = { text = "MIT" }
+requires-python = ">=3.12"
+dependencies = [
+    "anthropic>=2.3.0",
+    "httpx>=0.28.0",
+    "jsonschema>=4.26.0",
+    "pydantic>=2.14.0",
+    "pyyaml>=6.0.0",
+    "structlog>=26.1.0",
+    "typer>=0.27.0",
+]
+
+[project.scripts]
+evalh = "evalh.cli:app"
+
+[dependency-groups]
+dev = [
+    "mypy>=2.4.0",
+    "pytest>=9.2.0",
+    "pytest-asyncio>=1.4.0",
+    "ruff>=0.17.0",
+    "types-jsonschema>=4.26.0",
+    "types-pyyaml>=6.0.12",
+]
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/evalh"]
+
+[tool.ruff]
+line-length = 100
+src = ["src", "tests"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B", "SIM", "ASYNC"]
+
+[tool.mypy]
+strict = true
+plugins = ["pydantic.mypy"]
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+testpaths = ["tests"]
