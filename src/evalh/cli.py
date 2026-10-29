@@ -1,7 +1,6 @@
 """`evalh` command line."""
 
 import asyncio
-import sys
 from pathlib import Path
 from typing import Annotated
 
@@ -47,7 +46,7 @@ def run(
     timeout: Annotated[float, typer.Option(min=0.001, help="Per-case timeout, seconds.")] = 60.0,
 ) -> None:
     """Run a suite. Exit 1 on regression vs baseline, 2 on config error."""
-    structlog.configure(logger_factory=structlog.PrintLoggerFactory(file=sys.stderr))
+    structlog.configure(logger_factory=structlog.stdlib.LoggerFactory())
     try:
         suite = load_suite(suite_path)
         judge = Judge() if _needs_judge(suite) else None
