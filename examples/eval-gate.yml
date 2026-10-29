@@ -1,0 +1,29 @@
+# Copy to .github/workflows/eval-gate.yml in the repo that owns the LLM app.
+# Pattern: a committed baseline (evals/baseline.jsonl) is the last accepted run.
+# The job fails (exit 1) when the pass rate drops or any case newly fails.
+name: eval-gate
+
+on:
+  pull_request:
+
+jobs:
+  evals:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: astral-sh/setup-uv@v10
+      - run: uv tool install git+https://github.com/Muhaman/llm-eval-harness
+      - name: Run suite against baseline
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+        run: evalh run evals/suite.yaml --baseline evals/baseline.jsonl --out results.jsonl --report report.md
+      - name: Publish report
+        if: always()
+        run: cat report.md >> "$GITHUB_STEP_SUMMARY"
+      - uses: actions/upload-artifact@v5
+        if: always()
+        with:
+          name: eval-results
+          path: |
+            results.jsonl
+            report.md

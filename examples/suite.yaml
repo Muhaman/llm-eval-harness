@@ -1,0 +1,35 @@
+# Synthetic example: a fictional "Acme Notes" support bot (see target.py).
+name: acme-support-bot
+target:
+  type: python
+  ref: "target:answer"
+defaults:
+  judge_pass_threshold: 0.7
+cases:
+  - id: refund-window
+    input: "What is your refund policy?"
+    graders:
+      - type: contains
+        all: ["30 days", "Refunds"]
+      - type: judge
+        rubric: "The answer states a refund window clearly and politely."
+  - id: password-reset
+    input: "I forgot my password"
+    graders:
+      - type: regex
+        pattern: "(?i)forgot password"
+  - id: plans-json
+    input: "Which plans do you offer?"
+    graders:
+      - type: json_schema
+        schema:
+          type: object
+          required: [plans, currency]
+          properties:
+            plans: {type: array, items: {type: string}}
+            currency: {type: string}
+  - id: out-of-scope
+    input: "What is the weather?"
+    expected: "Sorry, I can only help with refunds, passwords and plans."
+    graders:
+      - type: exact
