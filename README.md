@@ -69,10 +69,10 @@ Docker:
 
 ```bash
 docker build -t evalh .
-docker run --rm evalh run examples/suite.yaml
+docker run --rm -e ANTHROPIC_API_KEY evalh run examples/suite.yaml
 ```
 
-The judge uses `EVALH_JUDGE_MODEL` (default `claude-haiku-5-5`) at `low` effort and returns a pydantic-validated `{score, reasoning}`.
+The judge grader needs `ANTHROPIC_API_KEY`, hence the `-e` flag above. It uses `EVALH_JUDGE_MODEL` (default `claude-haiku-5-5`) at `low` effort and returns a pydantic-validated `{score, reasoning}`.
 
 ## Design decisions & trade-offs
 
